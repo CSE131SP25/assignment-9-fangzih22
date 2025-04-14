@@ -5,28 +5,56 @@ import java.awt.event.KeyEvent;
 import edu.princeton.cs.introcs.StdDraw;
 
 public class Game {
-	
+	private Snake snake;
+	private Food food;
+	private int score = 0;
 	public Game() {
 		StdDraw.enableDoubleBuffering();
-		
+
 		//FIXME - construct new Snake and Food objects
+
+
+		snake = new Snake();
+		food = new Food();
 	}
-	
+
 	public void play() {
-		while (true) { //TODO: Update this condition to check if snake is in bounds
+		//while (true) { //TODO: Update this condition to check if snake is in bounds
+		//int dir = getKeypress();
+		//Testing only: you will eventually need to do more work here
+		//System.out.println("Keypress: " + dir);
+
+		/*
+		 * 1. Pass direction to your snake
+		 * 2. Tell the snake to move
+		 * 3. If the food has been eaten, make a new one
+		 * 4. Update the drawing
+		 */
+		while (snake.isInbounds()) {
 			int dir = getKeypress();
-			//Testing only: you will eventually need to do more work here
-			System.out.println("Keypress: " + dir);
-			
-			/*
-			 * 1. Pass direction to your snake
-			 * 2. Tell the snake to move
-			 * 3. If the food has been eaten, make a new one
-			 * 4. Update the drawing
-			 */
+			if (dir != -1) {
+				snake.changeDirection(dir);
+			}
+
+			snake.move();
+
+			if (snake.eatFood(food)) {
+				food = new Food(); 
+				score ++;
+			}
+
+			updateDrawing();
 		}
+
+		
+		StdDraw.clear();
+		StdDraw.setPenColor(StdDraw.RED);
+		StdDraw.text(0.5, 0.5, "Game Over!");
+		StdDraw.show();
 	}
-	
+
+
+
 	private int getKeypress() {
 		if(StdDraw.isKeyPressed(KeyEvent.VK_W)) {
 			return 1;
@@ -40,13 +68,22 @@ public class Game {
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Clears the screen, draws the snake and food, pauses, and shows the content
 	 */
 	private void updateDrawing() {
-		//FIXME
+		StdDraw.clear();
+		snake.draw();
+		food.draw();
 		
+		StdDraw.setPenColor(StdDraw.BLACK);
+	    StdDraw.textLeft(0.01, 0.98, "Score: " + score);
+
+		
+		StdDraw.pause(50); // 50ms pause = ~20 FPS
+		StdDraw.show();
+
 		/*
 		 * 1. Clear screen
 		 * 2. Draw snake and food
@@ -54,7 +91,7 @@ public class Game {
 		 * 4. Show
 		 */
 	}
-	
+
 	public static void main(String[] args) {
 		Game g = new Game();
 		g.play();
